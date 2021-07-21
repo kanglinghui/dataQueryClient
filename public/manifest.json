@@ -1,0 +1,21 @@
+
+{
+    "short_name": "聊塑参考数据库 - 后台管理",
+    "name": "聊塑参考数据库 - 后台管理",
+    "icon": [  
+        {
+         "src": "./img/icons/logo.jpeg",
+         "sizes": "192x192", 
+         "type": "image/jpeg"        
+        },
+        {
+         "src": "./img/icons/logo.jpeg",
+         "sizes": "512x512",
+         "type": "image/jpeg"
+        }
+    ],
+    "start_url": "./index.html", 
+    "display": "standalone", 
+    "background_color": "#002140", 
+    "theme_color": "#4c89fe"
+}
