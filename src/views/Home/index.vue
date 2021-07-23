@@ -15,7 +15,7 @@
         background-color="#545c64"
         text-color="#fff"
         active-text-color="#ffd04b"
-        style="overflow-y: auto; height: calc(100vh - 48px); border-right: 0"
+        style="overflow-y: auto; height: calc(100vh - 68px); border-right: 0"
       >
         <el-menu-item
           v-for="item in menuList"
@@ -49,6 +49,9 @@
           </div>
         </el-menu-item>
       </el-menu>
+      <div class="version">
+        当前版本: <i> V{{ tips.version }} </i>
+      </div>
     </div>
     <div :class="!mdStatus && !htmlShow ? 'right-main' : 'detail'">
       <div v-if="!mdStatus && !htmlShow">
@@ -124,13 +127,6 @@
                   >查看</el-link
                 >
                 <el-link @click="del(scope.row)" type="danger">删除</el-link>
-                <!-- <el-button @click="editor(scope.row)" type="primary"
-                  >编 辑</el-button
-                >
-                <el-button @click="toView(scope.row)" plain>查 看</el-button>
-                <el-button @click="del(scope.row)" type="danger" plain
-                  >删 除</el-button
-                > -->
               </template>
             </el-table-column>
           </el-table>
@@ -152,7 +148,7 @@
             >编 辑</el-button
           >
         </div>
-        <div class="topTitle">
+        <div class="topTitle" v-if="htmlShow">
           {{ `${topTitle.tableName}（${topTitle.EnTableName}）` }}
         </div>
       </div>
@@ -182,6 +178,7 @@ import ViewUI from "./components/View.vue";
 import { add, query, update, del } from "@/api";
 // import { debounce } from "@/utils/index.js";
 const moment = require("moment");
+import data from "../../../package.json";
 // const db = new quickDB();
 export default {
   name: "Login",
@@ -205,6 +202,9 @@ export default {
       menuList: [],
       viewParams: null,
       topTitle: null,
+      tips: {
+        version: data.version,
+      },
     };
   },
   created() {
@@ -227,7 +227,14 @@ export default {
     rest() {
       this.value = "";
       this.activeIdx = undefined;
-      this.query();
+      this.reload();
+    },
+    reload() {
+      query({ tableName: this.value }).then((json) => {
+        this.menuList = json.list;
+        this.tableData = json.list;
+        this.$message.success("更新成功!");
+      });
     },
     getData() {
       query({ tableName: this.value }).then((json) => {
@@ -260,25 +267,11 @@ export default {
           this.$message.success("编辑成功!");
         }
       });
-      //   new quickDB()
-      //     .updateTable(this.id, {
-      //       ...val,
-      //       filterStr: this.addParams.tableName + val.md,
-      //     })
-      //     .then((res) => {
-      //       console.log(res);
-      //       this.query();
-      //       this.mdStatus = false;
-      //       if (val.msg) {
-      //         this.$message.success("编辑成功!");
-      //       }
-      //     });
     },
     addEdit(e) {
       this.mdStr = "";
       update({ id: this.id, ...e }).then(() => {
-        this.query();
-        this.$message.success("更新成功!");
+        this.reload();
       });
     },
     addSub(e) {
@@ -292,19 +285,6 @@ export default {
         this.mdStatus = true;
         this.$message.success("新建成功");
       });
-      //   new quickDB()
-      //     .addMessage({
-      //       Id: id,
-      //       filterStr: e.tableName,
-      //       ...e,
-      //     })
-      //     .then(() => {
-      //       this.value = "";
-      //       this.query();
-      //       this.addParams = e;
-      //       this.mdStatus = true;
-      //       this.$message.success("新建成功");
-      //     });
     },
     toView(row) {
       this.viewParams = row;
@@ -339,14 +319,6 @@ export default {
       query({ tableName: this.value }).then((json) => {
         this.tableData = json.list;
       });
-      //   this.loading = true;
-      //   db.getStrFilter(this.value)
-      //     .then((res) => {
-      //       console.log(res, "res");
-      //       this.tableData = res;
-      //       this.loading = false;
-      //     })
-      //     .catch(() => (this.loading = false));
     },
     del(row) {
       this.$confirm(`此操作将删除《${row.tableName}》表, 是否继续?`, "提示", {
@@ -437,6 +409,12 @@ export default {
 .topTitle {
   line-height: 66px;
   text-align: center;
-  width: calc(100vw - 260px);
+  width: calc(100vw - 263px);
+}
+.version {
+  line-height: 20px;
+  text-align: center;
+  color: #ffe2aa;
+  font-size: 12px;
 }
 </style>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Message } from "element-ui";
+const log = require("electron-log");
 // import { startLoading, endLoading } from "@/utils/loading";
 
 const service = axios.create({
@@ -22,6 +23,7 @@ service.interceptors.request.use(
   (error) => {
     // do something with request error
     console.log(error); // for debug
+    log.info(`ajax拦截器: ${error}`);
     return Promise.reject(error);
   }
 );
@@ -93,7 +95,7 @@ service.interceptors.response.use(
     }
 
     const msg = `${error.response.status}: ${errMsg}`;
-
+    log.info(`服务器错误: ${error}`);
     console.log(error); // for debug
 
     Message({

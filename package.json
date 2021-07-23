@@ -1,6 +1,6 @@
 {
-  "name": "data-query",
-  "version": "0.1.0",
+  "name": "ls-database",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service electron:serve",
@@ -24,6 +24,7 @@
     "@toast-ui/editor-plugin-uml": "^3.0.1",
     "core-js": "^3.6.4",
     "dexie": "^3.0.3",
+    "electron-log": "^4.3.5",
     "element-ui": "^2.15.2",
     "moment": "^2.29.1",
     "phantomjs-prebuilt": "^2.1.14",

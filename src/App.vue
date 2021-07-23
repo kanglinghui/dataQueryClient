@@ -5,13 +5,29 @@
 </template>
 <script>
 import { remote } from "electron";
-
+const log = require("electron-log");
 export default {
+  data() {
+    return {
+      timer: null,
+    };
+  },
   created() {
+    log.info("启动客户端");
     remote.crashReporter.start({
       submitURL: "http://114.96.104.203:9000/viewLog",
       compress: true,
     });
+    this.timer = setInterval(() => {
+      this.$notify({
+        title: "休息提醒",
+        message: "工作再忙也要注意眼部休息哦 ^_^ !",
+        type: "warning",
+      });
+    }, 10800000);
+  },
+  beforeDestroy() {
+    this.timer && clearInterval(this.timer);
   },
 };
 </script>
