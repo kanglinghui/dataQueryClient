@@ -37,7 +37,7 @@ async function createWindow() {
     // fullscreen: true,
     webPreferences: {
       scrollBounce: true,
-      devTools: process.env.ENV === "development" ? true : false, // 是否开启调试模式
+      //   devTools: process.env.ENV === "development" ? true : false, // 是否开启调试模式
       webSecurity: false,
       contextIsolation: false,
       enableRemoteModule: true,
@@ -48,7 +48,7 @@ async function createWindow() {
   // win.webContents.openDevTools();
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + "/#/");
-    if (!process.env.IS_TEST) win.webContents.openDevTools();
+    // if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("lead");
     win.loadURL("lead://./index.html/#/");
@@ -71,6 +71,9 @@ ipcMain.on("message", (e, value) => {
       });
       break;
   }
+});
+ipcMain.on("devtool", () => {
+  win.webContents.openDevTools();
 });
 ipcMain.on("saveFile", (event, data) => {
   saveFile(data, (params) => {

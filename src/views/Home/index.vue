@@ -26,7 +26,7 @@
           <div slot="title">
             <el-tooltip
               placement="right"
-              :disabled="item.tableName.length < 14"
+              :disabled="item.tableName.length + item.EnTableName.length < 16"
             >
               <div slot="content">
                 中文表名：{{ item.tableName }}<br />英文表名：{{
@@ -34,23 +34,26 @@
                 }}
               </div>
 
-              <span style="font-size: 12px"
+              <span
+                style="
+                  font-size: 12px;
+                  overflow: hidden;
+                  display: inline-block;
+                  width: 170px;
+                  text-overflow: ellipsis;
+                "
                 >{{
                   item.tableName.length > 13
                     ? item.tableName.slice(0, 13) + "..."
                     : item.tableName
-                }}<i
-                  style="margin-left: 5px"
-                  v-if="item.tableName.length < 14"
-                  >{{ item.EnTableName }}</i
-                ></span
+                }}<i style="margin-left: 5px">{{ item.EnTableName }}</i></span
               >
             </el-tooltip>
           </div>
         </el-menu-item>
       </el-menu>
       <div class="version">
-        当前版本: <i> V{{ tips.version }} </i>
+        当前版本: <i @click="openDevTool"> V{{ tips.version }} </i>
       </div>
     </div>
     <div :class="!mdStatus && !htmlShow ? 'right-main' : 'detail'">
@@ -179,6 +182,7 @@ import { add, query, update, del } from "@/api";
 // import { debounce } from "@/utils/index.js";
 const moment = require("moment");
 import data from "../../../package.json";
+import { ipcRenderer } from "electron";
 // const db = new quickDB();
 export default {
   name: "Login",
@@ -212,8 +216,8 @@ export default {
   },
   methods: {
     init() {
-      this.query();
-      this.getData();
+      this.query("init");
+      //   this.getData();
     },
     add() {
       this.$refs.addDialog.title = "新增";
@@ -237,7 +241,7 @@ export default {
       });
     },
     getData() {
-      query({ tableName: this.value }).then((json) => {
+      query({ tableName: this.value || "" }).then((json) => {
         this.menuList = json.list;
         if (!this.value) {
           this.activeIdx = undefined;
@@ -314,10 +318,13 @@ export default {
       this.mdStatus = true;
       this.htmlShow = false;
     },
-    query() {
+    query(type = "") {
       //查询
-      query({ tableName: this.value }).then((json) => {
+      query({ tableName: this.value || "" }).then((json) => {
         this.tableData = json.list;
+        if (type === "init") {
+          this.menuList = json.list;
+        }
       });
     },
     del(row) {
@@ -338,6 +345,10 @@ export default {
       //返回操作
       this.htmlShow = false;
       this.mdStatus = false;
+    },
+    openDevTool() {
+      // 打开开发者工具
+      ipcRenderer.send("devtool");
     },
   },
 };
@@ -416,5 +427,6 @@ export default {
   text-align: center;
   color: #ffe2aa;
   font-size: 12px;
+  cursor: pointer;
 }
 </style>

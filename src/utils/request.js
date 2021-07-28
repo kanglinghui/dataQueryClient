@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Message } from "element-ui";
+import { Message, MessageBox } from "element-ui";
 const log = require("electron-log");
 // import { startLoading, endLoading } from "@/utils/loading";
 
@@ -95,7 +95,11 @@ service.interceptors.response.use(
     }
 
     const msg = `${error.response.status}: ${errMsg}`;
-    log.info(`服务器错误: ${error}`);
+    MessageBox.alert(`${error}`, "异常提示", {
+      confirmButtonText: "确定",
+      callback: () => {},
+    });
+    log.info(`服务器错误: 请求url${baseURL}:${error}`);
     console.log(error); // for debug
 
     Message({

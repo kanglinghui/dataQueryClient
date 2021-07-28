@@ -26,9 +26,31 @@ export default {
       });
     }, 10800000);
   },
+  //   mounted() {
+  //     this.$nextTick(() => {
+  //       //   document.addEventListener("keydown", function (e) {
+  //       //     // alert("您按下的按钮的keyCode为：" + e.keyCode);
+  //       //     console.log(e.keyCode);
+  //       //     console.log(e.altKey);
+  //       //     // if (e.keyCode)
+  //       //   });
+  //       document.onkeydown = (e) => {
+  //         let keyCode = e.keyCode || e.which || e.charCode;
+  //         let shiftKey = e.shiftKey;
+  //         if (shiftKey && keyCode === 37) {
+  //           this.devetoolp();
+  //         }
+  //       };
+  //     });
+  //   },
   beforeDestroy() {
     this.timer && clearInterval(this.timer);
   },
+  //   methods: {
+  //     devetoolp() {
+  //       ipcRenderer.send("devtool");
+  //     },
+  //   },
 };
 </script>
 <style lang="scss">

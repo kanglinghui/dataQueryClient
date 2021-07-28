@@ -60,7 +60,7 @@ module.exports = {
         dmg: {
           // background: 'public/img/launch.png',
           icon: "assets/icons/icon.icns",
-          iconSize: 100,
+          iconSize: 90,
           artifactName: "dictionaries-${version}.${ext}",
         },
         win: {
