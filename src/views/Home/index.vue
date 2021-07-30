@@ -206,6 +206,7 @@ export default {
       menuList: [],
       viewParams: null,
       topTitle: null,
+      exit: true,
       tips: {
         version: data.version,
       },
@@ -213,6 +214,16 @@ export default {
   },
   created() {
     this.init();
+  },
+  mounted() {
+    ipcRenderer.on("closed", () => {
+      if (this.mdStatus) {
+        this.back();
+        ipcRenderer.send("exit", this.exit);
+      } else {
+        ipcRenderer.send("exit", true);
+      }
+    });
   },
   methods: {
     init() {
@@ -268,7 +279,7 @@ export default {
         this.query();
         this.mdStatus = false;
         if (val.msg) {
-          this.md_exit = true;
+          this.exit = true; //已经保存编辑内容
           this.$message.success("编辑成功!");
         }
       });
@@ -288,6 +299,7 @@ export default {
         this.getData();
         this.addParams = json.list;
         this.mdStatus = true;
+        this.exit = true; //是否已经保存编辑内容
         this.$message.success("新建成功");
       });
     },
@@ -306,6 +318,7 @@ export default {
       //编辑md
       this.topTitle = row;
       this.id = row.id;
+      this.exit = true; //是否已经保存编辑内容
       this.fileName = row.tableName + "_" + this.moment().format("YYYY-MM-DD");
       this.addParams = row;
       this.mdStr = row.md ? row.md : "";
@@ -348,8 +361,9 @@ export default {
         this.mdStatus &&
         this.addParams.md === this.$refs.md.editor.getMarkdown()
       ) {
+        this.exit = true; //不需要弹出保存提醒
         this.mdStatus = false;
-
+        this.$refs.md.md_exit = true;
         return;
       }
       if (
@@ -357,6 +371,7 @@ export default {
         !this.md_exit &&
         this.$refs.md.editor.getMarkdown()
       ) {
+        this.exit = false; //需要弹出保存提醒
         this.$confirm(
           `<div>您当前编辑的内容还未保存,请点击<b style="color:#67c23a;"> 提 交 </b>按钮保存或取消保存。</div>`,
           "当前编辑内容未保存",
@@ -367,13 +382,18 @@ export default {
             dangerouslyUseHTMLString: true,
           }
         )
-          .then(() => {})
+          .then(() => {
+            this.exit = false;
+          })
           .catch(() => {
+            this.exit = true;
+            this.$refs.md.md_exit = true;
             this.mdStatus = false;
           });
 
         return;
       }
+      this.exit = true; //不需要弹出保存提醒
       this.htmlShow = false;
       this.mdStatus = false;
     },

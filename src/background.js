@@ -53,6 +53,15 @@ async function createWindow() {
     createProtocol("lead");
     win.loadURL("lead://./index.html/#/");
   }
+  win.on("close", (event) => {
+    event.preventDefault();
+    win.webContents.send("closed");
+    ipcMain.on("exit", (e, data) => {
+      if (data) {
+        app.exit();
+      }
+    });
+  });
 }
 ipcMain.on("message", (e, value) => {
   switch (value) {

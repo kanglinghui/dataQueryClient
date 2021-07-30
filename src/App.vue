@@ -45,6 +45,7 @@ export default {
   //   },
   beforeDestroy() {
     this.timer && clearInterval(this.timer);
+    alert(123);
   },
   //   methods: {
   //     devetoolp() {
