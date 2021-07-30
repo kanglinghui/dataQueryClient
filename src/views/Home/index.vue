@@ -35,6 +35,7 @@
               </div>
 
               <span
+                class="name-box"
                 style="
                   font-size: 12px;
                   overflow: hidden;
@@ -42,11 +43,8 @@
                   width: 170px;
                   text-overflow: ellipsis;
                 "
-                >{{
-                  item.tableName.length > 13
-                    ? item.tableName.slice(0, 13) + "..."
-                    : item.tableName
-                }}<i style="margin-left: 5px">{{ item.EnTableName }}</i></span
+                ><span class="name-zn">{{ item.tableName }}</span
+                ><i style="margin-left: 5px">{{ item.EnTableName }}</i></span
               >
             </el-tooltip>
           </div>
@@ -156,6 +154,7 @@
         </div>
       </div>
       <MDUI
+        ref="md"
         :mdValue="mdStr"
         :name="fileName"
         @md-sub="mdSubmit($event)"
@@ -199,6 +198,7 @@ export default {
       addParams: null,
       tableIdx: 0,
       id: null,
+      md_exit: false,
       moment: moment,
       fileName: "数据" + moment().format("YYYY-MM-DD"),
       loading: false,
@@ -263,11 +263,12 @@ export default {
     },
     mdSubmit(val) {
       //md编辑成功回调
-      let { md, html } = val;
-      update({ id: this.addParams.id, md, html }).then(() => {
+      let { md } = val;
+      update({ id: this.addParams.id, md }).then(() => {
         this.query();
         this.mdStatus = false;
         if (val.msg) {
+          this.md_exit = true;
           this.$message.success("编辑成功!");
         }
       });
@@ -343,6 +344,36 @@ export default {
     },
     back() {
       //返回操作
+      if (
+        this.mdStatus &&
+        this.addParams.md === this.$refs.md.editor.getMarkdown()
+      ) {
+        this.mdStatus = false;
+
+        return;
+      }
+      if (
+        this.mdStatus &&
+        !this.md_exit &&
+        this.$refs.md.editor.getMarkdown()
+      ) {
+        this.$confirm(
+          `<div>您当前编辑的内容还未保存,请点击<b style="color:#67c23a;"> 提 交 </b>按钮保存或取消保存。</div>`,
+          "当前编辑内容未保存",
+          {
+            confirmButtonText: "继续编辑",
+            cancelButtonText: "取消保存",
+            type: "warning",
+            dangerouslyUseHTMLString: true,
+          }
+        )
+          .then(() => {})
+          .catch(() => {
+            this.mdStatus = false;
+          });
+
+        return;
+      }
       this.htmlShow = false;
       this.mdStatus = false;
     },
@@ -428,5 +459,14 @@ export default {
   color: #ffe2aa;
   font-size: 12px;
   cursor: pointer;
+}
+.name-box {
+  color: rgb(144, 147, 153);
+  .name-zn {
+    color: #fff;
+  }
+}
+/deep/.el-menu .is-active span {
+  color: #ffd04b;
 }
 </style>

@@ -30,6 +30,7 @@ export default {
     return {
       mdStr: "",
       htmlStr: "",
+      md_exit: null,
     };
   },
   mounted() {
@@ -87,6 +88,7 @@ export default {
           this.$message.error("请先编辑内容再操作!");
           return;
         }
+        this.md_exit = true;
         this.$emit("md-sub", {
           md: this.mdStr,
           html: this.htmlStr,
